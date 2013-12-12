@@ -517,9 +517,9 @@ module MaRuKu; module In; module Markdown; module BlockLevelParser
 
   def split_cells(s,allowBlank=false)
     if (allowBlank)
-      if (/^[|].*[|]$/ =~ s) # handle the simple and decorated table cases
+      if (/^[|].*[|]\s*$/ =~ s) # handle the simple and decorated table cases
         s.split('|',-1)[1..-2]   # allow blank cells, but only keep the inner elements of the cells
-      elsif (/^.*[|]$/ =~ s)
+      elsif (/^.*[|]\s*$/ =~ s)
         s.split('|',-1)[0..-2]   # allow blank cells, but only keep the inner elements of the cells        
       else
         s.split('|',-1)
