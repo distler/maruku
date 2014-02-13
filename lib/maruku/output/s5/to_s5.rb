@@ -78,7 +78,7 @@ module MaRuKu
       presentation << Nokogiri::XML::Document.parse(first_slide).root
 
       slide_num = 0
-      self.toc.section_children[0].section_children.each do |slide|
+      self.toc.section_children.each do |slide|
         slide_num += 1
         @doc.attributes[:doc_prefix] = "s#{slide_num}"
 
