@@ -75,7 +75,7 @@ module MaRuKu; module In; module Markdown; module BlockLevelParser
           if e.first.parsed_html &&
               (first_node_name = e.first.parsed_html.first_node_name) &&
               HTML_INLINE_ELEMS.include?(first_node_name) &&
-              !%w(svg math).include?(first_node_name) 
+              !%w(svg math).include?(first_node_name)
             content = [e.first]
             if e.size > 1
               content.concat(e[1].children)
@@ -97,18 +97,19 @@ module MaRuKu; module In; module Markdown; module BlockLevelParser
         output << read_abbreviation(src)
       when :xml_instr
         read_xml_instruction(src, output)
-      else # warn if we forgot something
-        line = src.cur_line
-        maruku_error "Ignoring line '#{line}' type = #{md_type}", src
-        src.shift_line
+      else # unhandled line type at this level
+        # Just treat it as raw text
+        read_text_material(src, output)
       end
     end
 
     merge_ial(output, src, output)
-    output.delete_if {|x| x.kind_of?(MDElement) && x.node_type == :ial }
-
-    # get rid of empty line markers
-    output.delete_if {|x| x == :empty }
+    output.delete_if do |x|
+      # Strip out IAL
+      (x.kind_of?(MDElement) && x.node_type == :ial) ||
+      # get rid of empty line markers
+      x == :empty
+    end
 
     # See for each list if we can omit the paragraphs
     # TODO: do this after
@@ -150,7 +151,7 @@ module MaRuKu; module In; module Markdown; module BlockLevelParser
         output << md_el(:definition_list, definition)
       end
     else # Start of a paragraph
-      output << read_paragraph(src)
+      output.concat read_paragraph(src)
     end
   end
 
@@ -276,16 +277,6 @@ module MaRuKu; module In; module Markdown; module BlockLevelParser
         break
       when :olist, :ulist
         break if !src.next_line || src.next_line.md_type == t
-      when :raw_html
-        # This is a pretty awful hack to handle inline HTML
-        # but it means double-parsing HMTL.
-        html = parse_span([src.cur_line], src)
-        unless html.empty? || html.first.is_a?(String)
-          if html.first.parsed_html
-            first_node_name = html.first.parsed_html.first_node_name
-          end
-        end
-        break if first_node_name && !HTML_INLINE_ELEMS.include?(first_node_name)
       end
       break if src.cur_line.strip.empty?
       break if src.next_line && [:header1, :header2].include?(src.next_line.md_type)
@@ -295,7 +286,48 @@ module MaRuKu; module In; module Markdown; module BlockLevelParser
     end
     children = parse_span(lines, src)
 
-    md_par(children)
+    pick_apart_non_inline_html(children)
+  end
+
+  # If there are non-inline HTML tags in the paragraph, break them out into
+  # their own elements and make paragraphs out of everything else.
+  def pick_apart_non_inline_html(children)
+    output = []
+    para_children = []
+
+    children.each do |child|
+      if element_is_non_inline_html?(child)
+        unless para_children.empty?
+          # Fix up paragraphs before non-inline elements having an extra space
+          last_child = para_children.last
+          if last_child.is_a?(String) && !last_child.empty?
+            last_child.replace last_child[0..-2]
+          end
+
+          output << md_par(para_children)
+          para_children = []
+        end
+        output << child
+      else
+        para_children << child
+      end
+    end
+
+    unless para_children.empty?
+      output << md_par(para_children)
+    end
+
+    output
+  end
+
+  # Is the given element an HTML element whose root is not an inline element?
+  def element_is_non_inline_html?(elem)
+    if elem.is_a?(MDElement) && elem.node_type == :raw_html && elem.parsed_html
+      first_node_name = elem.parsed_html.first_node_name
+      first_node_name && !HTML_INLINE_ELEMS.include?(elem.parsed_html.first_node_name)
+    else
+      false
+    end
   end
 
   # Reads one list item, either ordered or unordered.
@@ -519,7 +551,7 @@ module MaRuKu; module In; module Markdown; module BlockLevelParser
       if /^[|].*[|]$/ =~ s # handle the simple and decorated table cases
         s.split('|', -1)[1..-2]   # allow blank cells, but only keep the inner elements of the cells
       elsif /^.*[|]$/ =~ s
-        s.split('|', -1)[0..-2]   # allow blank cells, but only keep the inner elements of the cells        
+        s.split('|', -1)[0..-2]   # allow blank cells, but only keep the inner elements of the cells
       else
         s.split('|', -1)
       end
@@ -542,7 +574,7 @@ module MaRuKu; module In; module Markdown; module BlockLevelParser
       # otherwise left-align.
       starts = s.start_with? ':'
       ends = s.end_with? ':'
-      if s.empty?  # blank
+      if s.empty? # blank
         nil
       elsif starts && ends
         :center
@@ -555,7 +587,7 @@ module MaRuKu; module In; module Markdown; module BlockLevelParser
 
     align.pop if align[-1].nil? # trailing blank
     num_columns = align.size
-    
+
     head.pop if head.size == num_columns + 1 && head[-1].al.size == 0 # trailing blank
 
     if head.size != num_columns
@@ -566,7 +598,7 @@ module MaRuKu; module In; module Markdown; module BlockLevelParser
     end
 
     rows = []
-    while src.cur_line && src.cur_line.include?('|') 
+    while src.cur_line && src.cur_line.include?('|')
       row = []
       colCount = 0
       colspan = 1
@@ -579,13 +611,13 @@ module MaRuKu; module In; module Markdown; module BlockLevelParser
           colspan +=  1
           al = (currElem &&currElem.al) || AttributeList.new
           if al.size > 0
-            elem = find_colspan(al) 
+            elem = find_colspan(al)
             if elem != nil
               elem[1] = colspan.to_s
               found = true
             end
           end
-          al.push(["colspan", colspan.to_s]) unless found # also handles the case of an empty attribute list
+          al.push(["colspan", colspan.to_s]) unless found # also handles the case of and empty attribute list
         else
           colspan = 1
           row[currIdx] = md_el(:cell, parse_span(s))
@@ -594,10 +626,10 @@ module MaRuKu; module In; module Markdown; module BlockLevelParser
         end
       end
 
-   # 
-   # sanity check - make sure the current row has the right number of columns (including spans)
-   #                If not, dump the table and return a break
-   #
+      #
+      # sanity check - make sure the current row has the right number of columns (including spans)
+      #                If not, dump the table and return a break
+      #
       num_columns = count_columns(row)
       if num_columns == head.size + 1 && row[-1].al.size == 0 #trailing blank cell
         row.pop
@@ -621,16 +653,16 @@ module MaRuKu; module In; module Markdown; module BlockLevelParser
   def count_columns(row)
     colCount = 0
 
-    row.each do  |cell|
+    row.each do |cell|
       if cell.al && cell.al.size > 0
-         al = find_colspan(cell.al)
-         if al != nil
-            colCount += al[1].to_i
-         else
-            colCount += 1
-         end
+        al = find_colspan(cell.al)
+        if al != nil
+          colCount += al[1].to_i
+        else
+          colCount += 1
+        end
       else
-         colCount += 1
+        colCount += 1
       end
     end
 
