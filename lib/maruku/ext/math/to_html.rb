@@ -178,6 +178,13 @@ module MaRuKu
         a << xtext(ref.num.to_s)
         a
       end
+
+      def to_html_citation
+        span = xelem('span')
+        span['class'] = 'maruku-citation'
+        span << xtext("[#{self.cites.join(',')}]")
+        span
+      end
     end
   end
 end

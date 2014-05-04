@@ -315,7 +315,6 @@ module MaRuKu; module In; module Markdown; module BlockLevelParser
       lines.unshift ""
     end
 
-
     # add first line
     # Strip first '*', '-', '+' from first line
     first_changed = first.gsub(/([^\t]*)(\t)/) { $1 + " " * (TAB_SIZE - $1.length % TAB_SIZE) }
@@ -515,14 +514,14 @@ module MaRuKu; module In; module Markdown; module BlockLevelParser
     out << md_ref_def(id, url, :title => title)
   end
 
-  def split_cells(s,allowBlank=false)
-    if (allowBlank)
-      if (/^[|].*[|]$/ =~ s) # handle the simple and decorated table cases
-        s.split('|',-1)[1..-2]   # allow blank cells, but only keep the inner elements of the cells
-      elsif (/^.*[|]$/ =~ s)
-        s.split('|',-1)[0..-2]   # allow blank cells, but only keep the inner elements of the cells        
+  def split_cells(s, allowBlank = false)
+    if allowBlank
+      if /^[|].*[|]$/ =~ s # handle the simple and decorated table cases
+        s.split('|', -1)[1..-2]   # allow blank cells, but only keep the inner elements of the cells
+      elsif /^.*[|]$/ =~ s
+        s.split('|', -1)[0..-2]   # allow blank cells, but only keep the inner elements of the cells        
       else
-        s.split('|',-1)
+        s.split('|', -1)
       end
     else
       s.split('|').reject(&:empty?).map(&:strip)
@@ -554,7 +553,7 @@ module MaRuKu; module In; module Markdown; module BlockLevelParser
       end
     end
 
-    align.pop if align[-1].nil? #trailing blank
+    align.pop if align[-1].nil? # trailing blank
     num_columns = align.size
     
     head.pop if head.size == num_columns + 1 && head[-1].al.size == 0 # trailing blank
@@ -568,36 +567,35 @@ module MaRuKu; module In; module Markdown; module BlockLevelParser
 
     rows = []
     while src.cur_line && src.cur_line.include?('|') 
-        row = []
-        colCount=0 
-        colspan=1
-        currElem = nil
-        currIdx = 0
-        split_cells(src.shift_line,true).map do |s|
-        if (!s.empty?)
-          colspan=1
-          row[currIdx] = md_el(:cell, parse_span(s))
-          currElem = row[currIdx]
-          currIdx += 1
-        else
+      row = []
+      colCount = 0
+      colspan = 1
+      currElem = nil
+      currIdx = 0
+      split_cells(src.shift_line, true).map do |s|
+        if s.empty?
           # empty cells increase the colspan of the previous cell
           found = false
           colspan +=  1
           al = (currElem &&currElem.al) || AttributeList.new
-          if (al.size>0)
-             elem = find_colspan(al) 
-             if (elem != nil)
-               elem[1] = colspan.to_s
-               found= true
-             end
+          if al.size > 0
+            elem = find_colspan(al) 
+            if elem != nil
+              elem[1] = colspan.to_s
+              found = true
+            end
           end
-          if (!found)  #also handles the case of and empty attribute list
-            al.push(["colspan",colspan.to_s])
-          end
-       end
+          al.push(["colspan", colspan.to_s]) unless found # also handles the case of an empty attribute list
+        else
+          colspan = 1
+          row[currIdx] = md_el(:cell, parse_span(s))
+          currElem = row[currIdx]
+          currIdx += 1
+        end
       end
+
    # 
-   # sanity check - make sure the current row has the right number of columns (including spans) 
+   # sanity check - make sure the current row has the right number of columns (including spans)
    #                If not, dump the table and return a break
    #
       num_columns = count_columns(row)
@@ -613,18 +611,20 @@ module MaRuKu; module In; module Markdown; module BlockLevelParser
       end
       rows << row
     end
-    rows.unshift(head) #put the header row on the processed table
+    rows.unshift(head) # put the header row on the processed table
     md_el(:table, rows, { :align => align })
   end
+
   #
   # count the actual number of elements in a row taking into account colspans
   #
   def count_columns(row)
     colCount = 0
-    row.each do  |cell| 
-      if (cell.al && cell.al.size>0)
+
+    row.each do  |cell|
+      if cell.al && cell.al.size > 0
          al = find_colspan(cell.al)
-         if (al != nil)
+         if al != nil
             colCount += al[1].to_i
          else
             colCount += 1
@@ -633,19 +633,17 @@ module MaRuKu; module In; module Markdown; module BlockLevelParser
          colCount += 1
       end
     end
-    return colCount
-  end  
+
+    colCount
+  end
+
   #
-  # Search and attriubute list looking for a colspan
+  # Search an attribute list looking for a colspan
   #
   def find_colspan(al)
-    al.each do  |alElem| 
-      if (alElem[0]=="colspan")
-        return alElem
-      end
-   end
-   return nil
+    al.find {|alElem| alElem[0] == "colspan" }
   end
+
   # If current line is text, a definition list is coming
   # if 1) text,empty,[text,empty]*,definition
   def eventually_comes_a_def_list(src)

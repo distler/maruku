@@ -157,16 +157,12 @@ module MaRuKu::In::Markdown::SpanLevelParser
         is_single = true
       end
 
-      my_debug "Attributes: #{attributes.inspect}"
-      my_debug "READ TAG #{@m.to_s.inspect} tag = #{tag} closing? #{is_closing} single = #{is_single}"
-
       if TO_SANITIZE.include? tag
         attributes.strip!
-        #   puts "Attributes: #{attributes.inspect}"
         if attributes.size > 0
-          @already <<  '<%s %s />' % [tag, attributes]
+          @already << '<%s %s />' % [tag, attributes]
         else
-          @already <<  '<%s />' % [tag]
+          @already << '<%s />' % [tag]
         end
       elsif is_closing
         if @tag_stack.empty?
@@ -180,11 +176,7 @@ module MaRuKu::In::Markdown::SpanLevelParser
         @tag_stack.pop
       else
         @already << @m.to_s
-
-        if not is_single
-          @tag_stack.push(tag)
-          my_debug "Pushing #{tag.inspect} when read #{@m.to_s.inspect}"
-        end
+        @tag_stack.push(tag) unless is_single
 
         if %w(script style).include?(@tag_stack.last)
           # This is necessary to properly parse

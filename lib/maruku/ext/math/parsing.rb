@@ -111,3 +111,15 @@ MaRuKu::In::Markdown.register_span_extension(
     con.push doc.md_el(:divref, [], :refid => refid)
     true
   end)
+
+# This adds support for \cite
+RegCite = /\\cite\{([^}]*?)\}/
+MaRuKu::In::Markdown.register_span_extension(
+  :chars => ["\\", '('],
+  :regexp => RegCite,
+  :handler => lambda do |doc, src, con|
+    return false unless doc.is_math_enabled?
+    cites = src.read_regexp(RegCite).captures.compact.first.split(/\s*,\s*/)
+    con.push doc.md_el(:citation, [], :cites => cites)
+    true
+  end)
