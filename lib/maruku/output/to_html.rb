@@ -3,6 +3,15 @@ require 'maruku/string_utils'
 
 # This module groups all functions related to HTML export.
 module MaRuKu::Out::HTML
+
+  # Escape text for use in HTML (content or attributes) by running it through
+  # standard XML escaping (quotes and angle brackets and ampersands)
+  def self.escapeHTML(text)
+    CGI.escapeHTML(text)
+    # TODO: When we drop Rubies < 1.9.3, re-add .gsub(/[^[:print:]\n\r\t]/, '') to
+    # get rid of non-printable control characters.
+  end
+
   # We don't want indentation because it messes up "pre" and makes
   # things inconsistent between MRI and JRuby
   OUTPUT_OPTIONS = Nokogiri::XML::Node::SaveOptions::DEFAULT_XHTML ^

@@ -1,4 +1,4 @@
-PENDING: Adds CDATA only when necessary.
+Adds CDATA only when necessary.
 NOTE: CDATA is output because we use XHTML - for HTML mode it should be omitted.
 *** Parameters: ***
 {}
