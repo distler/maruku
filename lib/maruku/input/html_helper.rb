@@ -10,13 +10,9 @@ module MaRuKu::In::Markdown::SpanLevelParser
     EverythingElse = %r{^[^<]+}m
     CommentStart = %r{^<!--}x
     CommentEnd = %r{-->}
-    TO_SANITIZE = ['img','hr','br']
+    TO_SANITIZE = ['img', 'hr', 'br']
 
     attr_reader :rest, :first_tag
-
-    def my_debug(s)
-      #    puts "---" * 10 + "\n" + inspect + "\t>>>\t" + s
-    end
 
     def initialize
       @rest = ""
@@ -26,7 +22,7 @@ module MaRuKu::In::Markdown::SpanLevelParser
       self.state = :inside_element
     end
 
-    attr_accessor :state # = :inside_element, :inside_tag, :inside_comment, :inside_cdata, :inside_script_style
+    attr_accessor :state # = :inside_element, :inside_tag, :inside_comment, :inside_cdata
 
     def eat_this(line)
       @rest = line + @rest
@@ -35,40 +31,44 @@ module MaRuKu::In::Markdown::SpanLevelParser
         case self.state
         when :inside_comment
           if @m = CommentEnd.match(@rest)
-            my_debug "#{@state}: Comment End: #{@m.to_s.inspect}"
-            @already << @m.pre_match.gsub(/--/,'- -').sub(/-$/,'- ') << @m.to_s
+            debug_state 'Comment End'
+            # Workaround for https://bugs.ruby-lang.org/issues/9277 and another bug in 1.9.2 where even a
+            # single dash in a comment will cause REXML to error.
+            @already << @m.pre_match.gsub(/-(?![^\-])/, '- ') << @m.to_s
             @rest = @m.post_match
             self.state = :inside_element
           else
-            @already << @rest.gsub(/--/,'- -')
+            @already << @rest.gsub(/-(?![^\-])/, '- ') # Workaround for https://bugs.ruby-lang.org/issues/9277
             @rest = ""
             self.state = :inside_comment
           end
         when :inside_element
           if @m = CommentStart.match(@rest)
-            my_debug "#{@state}: Comment: #{@m.to_s.inspect}"
+            debug_state 'Comment'
             things_read += 1
             @already << @m.pre_match << @m.to_s
             @rest = @m.post_match
             self.state = :inside_comment
           elsif @m = Tag.match(@rest)
-            my_debug "#{@state}: Tag: #{@m.to_s.inspect}"
+            debug_state 'Tag'
             things_read += 1
             self.state = :inside_element
             handle_tag
           elsif @m = CData.match(@rest)
-            my_debug "#{@state}: CDATA: #{@m.to_s.inspect}"
-            @already << @m.pre_match << @m.to_s
+            debug_state 'CDATA'
+            @already << @m.pre_match
+            close_script_style if script_style?
+            @already << @m.to_s
             @rest = @m.post_match
             self.state = :inside_cdata
           elsif @m = PartialTag.match(@rest)
-            my_debug "#{@state}: PartialTag: #{@m.to_s.inspect}"
+            debug_state 'PartialTag'
             @already << @m.pre_match
             @rest = @m.post_match
             @partial_tag = @m.to_s
             self.state = :inside_tag
           elsif @m = EverythingElse.match(@rest)
-            my_debug "#{@state}: Everything: #{@m.to_s.inspect}"
+            debug_state 'EverythingElse'
             @already << @m.pre_match << @m.to_s
             @rest = @m.post_match
             self.state = :inside_element
@@ -77,12 +77,14 @@ module MaRuKu::In::Markdown::SpanLevelParser
           end
         when :inside_tag
           if @m = /^[^>]*>/.match(@rest)
-            my_debug "#{@state}: matched #{@m.to_s.inspect}"
             @partial_tag << @m.to_s
-            my_debug "#{@state}: matched TOTAL: #{@partial_tag.to_s.inspect}"
             @rest = @partial_tag + @m.post_match
             @partial_tag = nil
             self.state = :inside_element
+            if @m = Tag.match(@rest)
+              things_read += 1
+              handle_tag
+            end
           else
             @partial_tag << @rest
             @rest = ""
@@ -90,60 +92,25 @@ module MaRuKu::In::Markdown::SpanLevelParser
           end
         when :inside_cdata
           if @m = CDataEnd.match(@rest)
-            my_debug "#{@state}: matched #{@m.to_s.inspect}"
+            self.state = :inside_element
             @already << @m.pre_match << @m.to_s
             @rest = @m.post_match
-            self.state = %(script style).include?(@tag_stack.last) ? :inside_script_style : :inside_element
+            start_script_style if script_style?
           else
             @already << @rest
             @rest = ""
             self.state = :inside_cdata
           end
-        when :inside_script_style
-          if @m = CData.match(@rest)
-            if @already.rstrip.end_with?('<![CDATA[')
-              @already << @m.pre_match
-              @rest = @m.post_match
-            else
-              my_debug "#{@state}: CDATA: #{@m.to_s.inspect}"
-              @already << @m.pre_match << @m.to_s
-              @rest = @m.post_match
-              self.state = :inside_cdata
-            end
-          elsif @m = Tag.match(@rest)
-            is_closing = !!@m[1]
-            tag = @m[2]
-            if is_closing && tag == @tag_stack.last
-              my_debug "#{@state}: matched #{@m.to_s.inspect}"
-              @already << @m.pre_match
-              @rest = @m.post_match
-              # This is necessary to properly parse
-              # script tags
-              @already << "]]>" unless @already.rstrip.end_with?("]]>")
-              self.state = :inside_element
-              handle_tag false # don't double-add pre_match
-           else
-              @already << @rest
-              @rest = ""
-            end
-          elsif @m = EverythingElse.match(@rest)
-            my_debug "#{@state}: Everything: #{@m.to_s.inspect}"
-            @already << @m.pre_match << @m.to_s
-            @rest = @m.post_match
-          else
-            @already << @rest
-            @rest = ""
-          end
         else
           raise "Bug bug: state = #{self.state.inspect}"
-        end # not inside comment
+        end
 
         break if is_finished? && things_read > 0
       end
     end
 
-    def handle_tag(add_pre_match = true)
-      @already << @m.pre_match if add_pre_match
+    def handle_tag
+      @already << @m.pre_match
       @rest = @m.post_match
 
       is_closing = !!@m[1]
@@ -167,10 +134,11 @@ module MaRuKu::In::Markdown::SpanLevelParser
       elsif is_closing
         if @tag_stack.empty?
           error "Malformed: closing tag #{tag.inspect} in empty list"
-        end
-        if @tag_stack.last != tag
+        elsif @tag_stack.last != tag
           error "Malformed: tag <#{tag}> closes <#{@tag_stack.last}>"
         end
+
+        close_script_style if script_style?
 
         @already << @m.to_s
         @tag_stack.pop
@@ -178,13 +146,26 @@ module MaRuKu::In::Markdown::SpanLevelParser
         @already << @m.to_s
         @tag_stack.push(tag) unless is_single
 
-        if %w(script style).include?(@tag_stack.last)
-          # This is necessary to properly parse
-          # script tags
-          @already << "<![CDATA["
-          self.state = :inside_script_style
-        end
+        start_script_style if script_style?
       end
+    end
+
+    def stuff_you_read
+      @already
+    end
+
+    def is_finished?
+      self.state == :inside_element && @tag_stack.empty?
+    end
+
+    private
+
+    def debug_state(note)
+      my_debug "#{@state}: #{note}: #{@m.to_s.inspect}"
+    end
+
+    def my_debug(s)
+      #    puts "---" * 10 + "\n" + inspect + "\t>>>\t" + s
     end
 
     def error(s)
@@ -201,12 +182,52 @@ module MaRuKu::In::Markdown::SpanLevelParser
         @rest.gsub(/^/, '|') + "\n"
     end
 
-    def stuff_you_read
-      @already
+    # Script and style tag handling
+    # -----------------------------
+    #
+    # XHTML, and XML parsers like REXML, require that certain characters be
+    # escaped within script or style tags. However, there are conflicts between
+    # documents served as XHTML vs HTML. So we need to be extra careful about
+    # how we escape these tags so they will even parse correctly. However, we
+    # also try to avoid adding that escaping unnecessarily.
+    #
+    # See http://dorward.me.uk/www/comments-cdata/ for a good explanation.
+
+    # Are we within a script or style tag?
+    def script_style?
+      %w(script style).include?(@tag_stack.last)
     end
 
-    def is_finished?
-      (self.state == :inside_element) and @tag_stack.empty?
+    # Save our @already buffer elsewhere, and switch to using @already for the
+    # contents of this script or style tag.
+    def start_script_style
+      @before_already, @already = @already, ""
     end
-  end # html helper
+
+    # Finish script or style tag content, wrapping it in CDATA if necessary,
+    # and add it to our original @already buffer.
+    def close_script_style
+      tag = @tag_stack.last
+
+      # See http://www.w3.org/TR/xhtml1/#C_4 for character sequences not allowed within an element body.
+      if @already =~ /<|&|\]\]>|--/
+        new_already = script_style_cdata_start(tag)
+        new_already << "\n" unless @already.start_with?("\n")
+        new_already << @already
+        new_already << "\n" unless @already.end_with?("\n")
+        new_already << script_style_cdata_end(tag)
+        @already = new_already
+      end
+      @before_already << @already
+      @already = @before_already
+    end
+
+    def script_style_cdata_start(tag)
+      (tag == 'script') ? "<!--//--><![CDATA[//><!--" : "/*<![CDATA[*/"
+    end
+
+    def script_style_cdata_end(tag)
+      (tag == 'script') ? "//--><!]]>" : "/*]]>*/"
+    end
+  end
 end

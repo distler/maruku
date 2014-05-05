@@ -335,7 +335,7 @@ module MaRuKu::In::Markdown::SpanLevelParser
     end
   end
 
-  # Reads a simple string (no formatting) until one of break_on_chars,
+  # Reads a simple string (no formatting) until one of exit_on_chars,
   # while escaping the escaped.
   # If the string is empty, it returns nil.
   # By default, raises on error if the string terminates unexpectedly. This can be
@@ -355,7 +355,7 @@ module MaRuKu::In::Markdown::SpanLevelParser
       when nil
         if warn
           maruku_error "String finished while reading (break on " +
-            "#{exit_on_chars.inspect})" +
+            "#{(exit_on_chars + exit_on_strings).inspect})" +
             " already read: #{text.inspect}", src
         end
         break
@@ -396,12 +396,10 @@ module MaRuKu::In::Markdown::SpanLevelParser
     md_emstrong(children)
   end
 
-  R_REF_ID = Regexp.compile(/([^\]]*?)\]/)
-
   # Reads a bracketed id "[refid]". Consumes also both brackets.
   def read_ref_id(src, con)
     src.ignore_char # [
-    if m = src.read_regexp(R_REF_ID)
+    if m = src.read_regexp(/([^\]]*?)\]/)
       m[1]
     else
       nil
@@ -657,4 +655,3 @@ module MaRuKu::In::Markdown::SpanLevelParser
     end
   end
 end
-

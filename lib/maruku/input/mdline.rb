@@ -123,7 +123,6 @@ module MaRuKu
 
   IncompleteLink = /\A[ ]{0,3}\[([^\[\]]+?)\]:\s*\z/
 
-
   # Table syntax: http://michelf.ca/projects/php-markdown/extra/#table
   # | -------------:| ------------------------------ |
   TableSeparator = /\A(?>\|?\s*\:?\-+\:?\s*\|?)+?\z/

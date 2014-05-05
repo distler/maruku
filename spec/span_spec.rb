@@ -186,10 +186,10 @@ EXPECTATIONS = Maruku.new.instance_eval do
 
     ['<http://example.com/?foo=1&bar=2>',
       [md_url('http://example.com/?foo=1&bar=2')], 'Immediate link'],
-    ['a<http://example.com/?foo=1&bar=2>b',
-      ['a',md_url('http://example.com/?foo=1&bar=2'),'b']  ],
     ['<https://example.com/?foo=1&bar=2>',
       [md_url('https://example.com/?foo=1&bar=2')], 'Immediate link https'],
+    ['a<http://example.com/?foo=1&bar=2>b',
+      ['a',md_url('http://example.com/?foo=1&bar=2'),'b']  ],
     ['<andrea@censi.org>',
       [md_email('andrea@censi.org')], 'Email address'],
     ['<mailto:andrea@censi.org>'],

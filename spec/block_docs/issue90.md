@@ -36,4 +36,3 @@ md_el(:document,[
 <h3 id="subheading"><span class="maruku_section_number">2.1. </span>Subheading</h3>
 
 <p>Foobar</p>
-
