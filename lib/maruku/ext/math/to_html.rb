@@ -182,7 +182,23 @@ module MaRuKu
       def to_html_citation
         span = xelem('span')
         span['class'] = 'maruku-citation'
-        span << xtext("[#{self.cites.join(',')}]")
+        span << xtext('[')
+        self.cites.each do |c|
+          if c =~ /(\w+):(\d\d\d\d\w\w)/ # INSPIRE
+            a = xelem('a')
+            a << xtext("http://inspirehep.net/search?p=#{$1}%3A#{$2}")
+            span << a << xtext(',')
+          elsif c =~ /MR(\d+)/ # MathReviews
+            a = xelem('a')
+            a << xtext("http://www.ams.org/mathscinet-getitem?mr=#{$1}")
+            span << a << xtext(',')
+          else
+            span << xtext(c + ',')
+          end
+        end
+        l = span.children.last
+        l.content = l.content.chop
+        span << xtext(']')
         span
       end
     end
