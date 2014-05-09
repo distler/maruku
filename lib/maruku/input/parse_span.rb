@@ -260,11 +260,11 @@ module MaRuKu::In::Markdown::SpanLevelParser
           src.ignore_char
           con.push_element md_entity('rsquo')
         elsif squote_state == :open
-          squote_state = :closed unless src.next_char =~ /[[:alpha:]]/
+          squote_state = :closed unless src.next_char =~ /[[:word:]]/
           src.ignore_char
           con.push_element md_entity('rsquo')
         else
-          if prev_char =~ /[[:alpha:]]/
+          if prev_char =~ /[[:word:]]/ || (prev_char =~ /[[:punct:]]/ && src.next_char =~ /[[:punct:]]/)
             src.ignore_char
             con.push_element md_entity('rsquo')
           else
