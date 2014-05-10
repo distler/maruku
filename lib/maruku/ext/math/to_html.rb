@@ -199,7 +199,7 @@ module MaRuKu
           end
         end
         l = span.children.last
-        l.content = l.content.chop
+        l.content = l.content.chop unless l.content == '['
         span << xtext(']')
         span
       end
