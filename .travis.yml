@@ -8,15 +8,27 @@ matrix:
       gemfile: Gemfile
     - rvm: 2.0.0
       gemfile: Gemfile
+    - rvm: 2.1.0
+      gemfile: Gemfile
     - rvm: jruby-18mode
       gemfile: Gemfile.1.8.7
     - rvm: jruby-19mode
       gemfile: Gemfile
     - rvm: rbx
       gemfile: Gemfile
+  fast_finish: true
+  allow_failures:
+    # rbx is broken on Travis right now
+    - rvm: rbx
 
 branches:
   only:
     - master
+
+# Fix broken RubyGems on Travis - https://github.com/rubygems/rubygems/pull/763
+# Remove when Travis has 2.2.1
+before_install:
+  - gem update --system
+  - gem --version
 
 script: "bundle exec rake test_with_coveralls"
