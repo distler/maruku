@@ -193,7 +193,7 @@ module MaRuKu::Out::HTML
     body = xelem('body')
 
     children_to_html.each do |e|
-      body << e.to_s
+      body << e
     end
 
     # render footnotes
