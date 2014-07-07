@@ -3,53 +3,12 @@ LaTeX_use_listings: true
 html_use_syntax: true
 use_numbered_headers: true
 
-Proposal for adding a meta-data syntax to Markdown
-=============================================
+Meta-data syntax implemented by Maruku
+======================================
 
 This document describes a syntax for attaching meta-data to
 block-level elements (headers, paragraphs, code blocks,&hellip;), 
 and to span-level elements (links, images,&hellip;).
-
-***Note: this is an evolving proposal***
-
-Last updated **January 10th, 2007**: 
-
-*	Changed the syntax for compatibility with a future extension mechanism.
-
-	The first character in the curly braces must be a colon, optionally
-	followed by a space:
-	
-		{: ref .class #id}
-	
-	The old syntax was `{ref .class #id}`.
-	
-	For ALDs, the new syntax is:
-	
-		{:ref_id: key=val .class #id }
-	
-	instead of:
-	
-		{ref_id}: key=val .class #id 
-
-	Converters that don't use this syntax may just ignore everything
-	which is in curly braces and starts with ":".
-
-*	IAL can be put both *before* and *after* the element.
-	There is no ambiguity as a blank line is needed between elements:
-	
-		Paragraph 1
-		
-		{:par2}
-		Paragraph 2
-
-	is equivalent to:
-	
-		Paragraph 1
-	
-		Paragraph 2
-		{:par2}
-
-*	Simplified rules for escaping.
 
 *Table of contents:*
 
@@ -278,6 +237,8 @@ Inside a quoted value you **must** escape the other kind of quote.
 Also, you **must** escape a closing curly brace `}` inside quoted values.
 This rule is for making life easier for interpreter that just want to skip
 the meta-data.
+
+### Just skip, if you want ####
 
 If you don't implement this syntax, you can get rid of the IAL by using this 
 regular expression (this is written in Ruby):

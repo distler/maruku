@@ -23,12 +23,15 @@ Mar**u**k**u**: a Markdown-superset interpreter
 >
 > 	$ gem update maruku
 >
+> The official repository has moved to GitHub: <a href="https://github.com/bhollis/maruku">https://github.com/bhollis/maruku</a>
 {#news}
 
 [rubygems]: http://rubygems.org
 
 Maruku features
 ===============
+
+![data flow](diagram.png){#dataflow}
 
 Maruku allows you to write in an easy-to-read-and-write syntax, like this:
 
@@ -52,8 +55,8 @@ Maruku implements:
 * a new [meta-data syntax][meta_data_proposal]
 
 
-__Authors__: Maruku has been developed so far by [Andrea Censi].
-Contributors are most welcome!
+__Authors__: Maruku has been developed so far by [Andrea Censi]. The current maintaner is
+ <a href="https://github.com/bhollis">Ben Hollis</a>. Many other people contributed patches; a partial list is in the AUTHORS file in the source distribution.
 
 __The name of the game__: Maruku is the [romaji] transliteration of 
 the [katakana] transliteration
@@ -82,7 +85,7 @@ is Japanese, and also the sillable "ru" appears in Maruku.
 [bluecloth]: http://www.deveiate.org/projects/BlueCloth
 [Markdown syntax]: http://daringfireball.net/projects/markdown/syntax
 [PHP Markdown Extra]: http://www.michelf.com/projects/php-markdown/extra/
-[math syntax]: ./math.xhtml
+[math_syntax]: ./math.xhtml
 [blahtex]: http://www.blahtex.org
 [ritex]: http://ritex.rubyforge.org
 [itex2mml]: http://rubygems.org/gems/itextomml/
@@ -152,7 +155,7 @@ Maruku summary of features                {#features}
 
 *	Supported syntax
 	
-	*	[Basic Markdown][markdown_syntax]
+	*	[Basic Markdown][Markdown syntax]
 	*	[Markdown Extra](#extra)
 	*	[Meta-data syntax](#meta)
 	
@@ -303,9 +306,9 @@ Examples of PHP Markdown Extra syntax {#extra}
 	Definition list
 	: something very hard to parse
 
-*	abbreviations or ABB for short.
+* abbreviations or ABB for short.
 
-[ABB]: Simply an abbreviation
+*[ABB]: Simply an abbreviation
 
 <!--
 Future developments                              {#future}
@@ -318,3 +321,4 @@ I would love to have an equivalent in Ruby.
 [MultiMarkdown]: http://fletcher.freeshell.org/wiki/MultiMarkdown
 
 -->
+

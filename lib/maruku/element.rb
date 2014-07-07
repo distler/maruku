@@ -112,10 +112,11 @@ module MaRuKu
     # @todo Make this non-destructive
     def replace_each_string(&block)
       @children.map! do |c|
-        next yield c unless c.is_a?(MDElement)
+        next yield c if c.is_a?(String)
         c.replace_each_string(&block)
         c
-      end.flatten!
+      end
+      @children.flatten! unless self.node_type == :table
     end
   end
 
@@ -123,5 +124,15 @@ module MaRuKu
   # its parsed HTML as an attribute (rather than metadata)
   class MDHTMLElement < MDElement
     attr_accessor :parsed_html # HTMLFragment
+  end
+end
+
+class Array
+  def replace_each_string(&block)
+    self.map! do |c|
+      next yield c if c.is_a?(String)
+      c.replace_each_string(&block)
+      c
+    end
   end
 end
