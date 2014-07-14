@@ -141,13 +141,11 @@ module MaRuKu::Out::HTML
 
   # Render to a complete HTML document (returns a Nokogiri document tree)
   def to_html_document_tree
-    doc = Nokogiri::XML::Document.new
 
     root = xelem('html')
     root.add_namespace(nil, 'http://www.w3.org/1999/xhtml')
     root.add_namespace('svg', "http://www.w3.org/2000/svg")
     root['xml:lang'] = self.attributes[:lang] || 'en'
-    doc << root
 
     root << xml_newline
     head = xelem('head')
