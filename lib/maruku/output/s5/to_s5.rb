@@ -1,40 +1,38 @@
+require 'maruku/output/to_html'
 
 module MaRuKu
-  require 'nokogiri'
-  require 'maruku/string_utils'
-
   class MDDocument
     def s5_theme
-      CGI::escapeHTML(self.attributes[:slide_theme] || "default")
+      xtext(self.attributes[:slide_theme] || "default")
     end
 
     # Render as an HTML fragment (no head, just the content of BODY). (returns a string)
     def to_s5(context={})
-      content_only = !context[:content_only].kind_of?(FalseClass)
-
-      doc = Nokogiri::XML::Document.new
+      content_only = context[:content_only] != false
+      print_slides = context[:print_slides]
 
       if content_only
-        body = Nokogiri::XML::Element.new('div', doc)
+        body = xelem('div')
       else
-        html = Nokogiri::XML::Element.new('html', doc)
-        doc << html
+        html = xelem('html')
         html.add_namespace(nil, 'http://www.w3.org/1999/xhtml')
         html.add_namespace('svg', "http://www.w3.org/2000/svg" )
 
-        head = Nokogiri::XML::Element.new('head', html)
+        head = xelem('head')
         html << head
-        me = Nokogiri::XML::Element.new('meta', head)
+
+        me = xelem('meta')
         me['http-equiv'] = 'Content-type'
         me['content'] = 'text/html;charset=utf-8'
-        head << meta
+        head << me
 
         # Create title element
         doc_title = self.attributes[:title] || self.attributes[:subject] || ""
-        title = Nokogiri::XML::Element.new 'title', head
-        title << Nokogiri::XML::Text.new(doc_title, head)
+        title = xelem('title')
+        title << xtext(doc_title)
         head << title
-        body = Nokogiri::XML::Element.new('body', html)
+
+        body = xelem('body')
         html << body
       end
 
@@ -61,9 +59,9 @@ module MaRuKu
     <div class='bottomright'> #{slide_bottomright}</div>
     </div>
                 "
-      body <<  Nokogiri::XML::Document.parse(dummy_layout_slide).root
+      body << Nokogiri::XML::Document.parse(dummy_layout_slide).root
 
-      presentation = Nokogiri::XML::Element.new('div', body)
+      presentation = xelem('div')
       presentation['class'] = 'presentation'
       body << presentation
 
@@ -82,11 +80,12 @@ module MaRuKu
         slide_num += 1
         @doc.attributes[:doc_prefix] = "s#{slide_num}"
 
-        div = Nokogiri::XML::Element.new('div', presentation)
+        div = xelem('div')
         presentation << div
         div['class'] = 'slide'
 
-        h1 = Nokogiri::XML::Element.new('h1', div)
+        h1 = xelem('h1')
+        puts "Slide #{slide_num}: #{slide.header_element.children_to_html.join}" if print_slides
         slide.header_element.children_to_html.inject(h1, &:<<)
         div << h1
 
