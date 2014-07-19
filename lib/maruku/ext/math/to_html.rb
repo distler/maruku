@@ -184,7 +184,7 @@ module MaRuKu
         span['class'] = 'maruku-citation'
         span << xtext('[')
         self.cites.each do |c|
-          if c =~ /(\w+):(\d\d\d\d\w\w)/ # INSPIRE
+          if c =~ /(\w+):(\d\d\d\d\w{2,3})/ # INSPIRE
             a = xelem('a')
             a << xtext(c)
             a['href'] = "http://inspirehep.net/search?p=#{$1}%3A#{$2}"
