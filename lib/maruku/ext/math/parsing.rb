@@ -103,7 +103,7 @@ MaRuKu::In::Markdown.register_span_extension(
 # This adds support for \ref
 RegRef = /\\ref\{(\w*?)\}/
 MaRuKu::In::Markdown.register_span_extension(
-  :chars => ["\\", '('],
+  :chars => ["\\"],
   :regexp => RegRef,
   :handler => lambda do |doc, src, con|
     return false unless doc.is_math_enabled?
@@ -115,7 +115,7 @@ MaRuKu::In::Markdown.register_span_extension(
 # This adds support for \cite
 RegCite = /\\cite\{([^}]*?)\}/
 MaRuKu::In::Markdown.register_span_extension(
-  :chars => ["\\", '('],
+  :chars => ["\\"],
   :regexp => RegCite,
   :handler => lambda do |doc, src, con|
     return false unless doc.is_math_enabled?
