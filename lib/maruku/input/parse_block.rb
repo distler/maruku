@@ -198,6 +198,10 @@ module MaRuKu; module In; module Markdown; module BlockLevelParser
       al = read_attribute_list(CharSource.new(ial, src))
     end
     level = line[/^#+/].size
+    if level > 6
+      text = parse_span line
+      return md_par(text, al)
+    end
     text = parse_span line.gsub(/\A#+|#+\z/, '')
     if text.empty?
       text = "{#{ial}}"
