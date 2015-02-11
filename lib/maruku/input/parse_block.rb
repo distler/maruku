@@ -421,7 +421,7 @@ module MaRuKu; module In; module Markdown; module BlockLevelParser
 
     while src.cur_line
       num_leading_spaces = src.cur_line.number_of_leading_spaces
-      break if num_leading_spaces < len && ![:text, :empty].include?(src.cur_line.md_type)
+      break if num_leading_spaces < len && ![:text, :empty, :code].include?(src.cur_line.md_type)
 
       line = strip_indent(src.cur_line, indentation)
       md_type = line.md_type

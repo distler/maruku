@@ -1,4 +1,4 @@
-PENDING - Maruku should handle weirdly indented lists.
+Maruku should handle weirdly indented lists.
 *** Parameters: ***
 {}
 *** Markdown input: ***
@@ -13,6 +13,13 @@ Suspendisse id sem consectetuer libero luctus adipiscing.
 Suspendisse id sem consectetuer libero luctus adipiscing.
  4.  Donec sit amet nisl. Aliquam semper ipsum sit amet velit.
  Suspendisse id sem consectetuer libero luctus adipiscing.
+
+Ancora
+
+ 1.  Donec sit amet nisl. Aliquam semper ipsum sit amet velit.
+ Suspendisse id sem consectetuer libero luctus adipiscing.
+
+            This is code
 *** Output of inspect ***
 md_el(:document,[
 	md_el(:ol,[
@@ -29,8 +36,15 @@ md_el(:document,[
 			"Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing."
 		],false),
 		md_li([
-			"Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing."
+		"Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing."
 		],false)
+	],{},[]),
+	md_par(["Ancora"]),
+	md_el(:ol,[
+		md_li([
+			md_par("Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing."),
+			md_el(:code, [], {:raw_code=>"   This is code", :lang=>nil})
+		],true)
 	],{},[]),
 ],{},[])
 *** Output of to_html ***
@@ -45,6 +59,17 @@ md_el(:document,[
 
 <li>Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing.</li>
 </ol>
+
+<p>Ancora</p>
+
+<ol>
+<li>
+
+<p>Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing.</p>
+
+<pre><code>   This is code</code></pre>
+</li>
+</ol>
 *** Output of to_latex ***
 \begin{enumerate}%
 \item Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.
@@ -54,5 +79,12 @@ md_el(:document,[
 \item Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing.
 
 \end{enumerate}
-*** Output of to_s ***
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing.Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing.Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing.Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing.AncoraThis is a list item with two paragraphs. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.ATTENZIONE!UnoDuetretretreDueSuspendisse id sem consectetuer libero luctus adipiscing.AncoraThis is a list item with two paragraphs.This is the second paragraph in the list item. Youre only required to indent the first line. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.Another item in the same list.
+Ancora
+
+\begin{enumerate}%
+\item Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing.
+
+\begin{verbatim}   This is code\end{verbatim}
+
+
+\end{enumerate}
