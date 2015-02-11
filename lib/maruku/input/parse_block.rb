@@ -449,6 +449,12 @@ module MaRuKu; module In; module Markdown; module BlockLevelParser
         break if break_list.include?(md_type)
       end
 
+      if md_type == :code && num_leading_spaces > len+6
+        lines << strip_indent(src.cur_line, num_leading_spaces-4)
+        src.shift_line
+        next
+      end
+
       lines << line
       src.shift_line
 

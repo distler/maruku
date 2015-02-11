@@ -43,7 +43,7 @@ md_el(:document,[
 	md_el(:ol,[
 		md_li([
 			md_par("Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing."),
-			md_el(:code, [], {:raw_code=>"   This is code", :lang=>nil})
+			md_el(:code, [], {:raw_code=>"This is code", :lang=>nil})
 		],true)
 	],{},[]),
 ],{},[])
@@ -67,7 +67,7 @@ md_el(:document,[
 
 <p>Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing.</p>
 
-<pre><code>   This is code</code></pre>
+<pre><code>This is code</code></pre>
 </li>
 </ol>
 *** Output of to_latex ***
@@ -84,7 +84,7 @@ Ancora
 \begin{enumerate}%
 \item Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing.
 
-\begin{verbatim}   This is code\end{verbatim}
+\begin{verbatim}This is code\end{verbatim}
 
 
 \end{enumerate}
