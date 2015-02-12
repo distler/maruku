@@ -19,7 +19,17 @@ Ancora
  1.  Donec sit amet nisl. Aliquam semper ipsum sit amet velit.
  Suspendisse id sem consectetuer libero luctus adipiscing.
 
-            This is code
+         This is code
+
+2.  Donec sit amet nisl. Aliquam semper ipsum sit amet velit.
+ Suspendisse id sem consectetuer libero luctus adipiscing.
+
+        This is code
+3.  Donec sit amet nisl. Aliquam semper ipsum sit amet velit.
+ Suspendisse id sem consectetuer libero luctus adipiscing.
+
+       This is not code
+
 *** Output of inspect ***
 md_el(:document,[
 	md_el(:ol,[
@@ -44,7 +54,15 @@ md_el(:document,[
 		md_li([
 			md_par("Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing."),
 			md_el(:code, [], {:raw_code=>"This is code", :lang=>nil})
-		],true)
+		],true),
+		md_li([
+			md_par("Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing."),
+			md_el(:code, [], {:raw_code=>"This is code", :lang=>nil})
+		],true),
+		md_li([
+			md_par("Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing."),
+			md_par("This is not code")
+		],nil),
 	],{},[]),
 ],{},[])
 *** Output of to_html ***
@@ -69,6 +87,18 @@ md_el(:document,[
 
 <pre><code>This is code</code></pre>
 </li>
+<li>
+
+<p>Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing.</p>
+
+<pre><code>This is code</code></pre>
+</li>
+<li>
+
+<p>Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing.</p>
+
+<p>This is not code</p>
+</li>
 </ol>
 *** Output of to_latex ***
 \begin{enumerate}%
@@ -85,6 +115,15 @@ Ancora
 \item Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing.
 
 \begin{verbatim}This is code\end{verbatim}
+
+\item Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing.
+
+\begin{verbatim}This is code\end{verbatim}
+
+\item Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing.
+
+This is not code
+
 
 
 \end{enumerate}
