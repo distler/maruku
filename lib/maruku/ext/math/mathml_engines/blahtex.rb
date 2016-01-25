@@ -55,7 +55,7 @@ COMMAND
     md5 = md5.text
 
     PNG.new("#{get_setting(:html_png_url)}#{md5}.png", depth, height)
-  rescue x=> e
+  rescue => e
     maruku_error "Error: #{e}"
   end
 
