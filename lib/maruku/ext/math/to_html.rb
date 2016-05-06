@@ -51,6 +51,10 @@ module MaRuKu
         method = "convert_to_mathml_#{engine}"
         if self.respond_to? method
           mathml = self.send(method, kind, tex)
+          if (mathml && get_setting(:html_math_generate_ids))
+            self.doc.math_id_counter += 1
+            mathml['id'] = "#{self.doc.math_id_prefix}#{self.doc.math_id_counter}"
+          end
           return mathml || convert_to_mathml_none(kind, tex)
         end
 
@@ -101,21 +105,19 @@ module MaRuKu
         mathml = get_setting(:html_math_output_mathml) && render_mathml(:inline, self.math)
         png    = get_setting(:html_math_output_png)    && render_png(:inline, self.math)
 
-        span = create_html_element 'span'
-        span['class'] = 'maruku-inline'
-
         if mathml
           mathml['class'] = 'maruku-mathml'
           return mathml
         end
 
         if png
+          span = create_html_element 'span'
+          span['class'] = 'maruku-inline'
           img = adjust_png(png, true)
           add_class_to(img, 'maruku-png')
           span << img
+          return span
         end
-
-        span
       end
 
       def to_html_equation

@@ -67,12 +67,12 @@ describe "A Maruku doc" do
       end
 
       it "should read in the output of #inspect as the same document" do
-        Maruku.new.instance_eval("#coding: utf-8\n#{@doc.inspect}", md).should == @doc
+        expect(Maruku.new.instance_eval("#coding: utf-8\n#{@doc.inspect}", md)).to be == @doc
       end
 
       unless ast.strip.empty?
         it "should produce the given AST" do
-          @doc.should == Maruku.new.instance_eval(ast, md)
+          expect(@doc).to be == Maruku.new.instance_eval(ast, md)
         end
       end
 
@@ -92,7 +92,7 @@ describe "A Maruku doc" do
           end
 
           if changed
-            res.should == expected[:to_html]
+            expect(res).to be == expected[:to_html]
           end
         end
       end
@@ -100,7 +100,7 @@ describe "A Maruku doc" do
       unless expected[:to_latex].strip.empty?
         it "should have the expected to_latex output" do
           res = @doc.to_latex.strip
-          res.should == expected[:to_latex]
+          expect(res).to be == expected[:to_latex]
         end
       end
     end

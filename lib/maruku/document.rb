@@ -1,3 +1,5 @@
+require 'digest'
+
 module MaRuKu
   # This represents the whole document and holds global data.
   class MDDocument # < MDElement
@@ -25,6 +27,10 @@ module MaRuKu
 
     # A counter for generating unique IDs [Integer]
     attr_accessor :id_counter
+
+    # When we want to give IDs to math elements
+    attr_accessor :math_id_prefix
+    attr_accessor :math_id_counter
 
     def initialize(s=nil)
       super(:document)

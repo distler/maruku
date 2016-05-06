@@ -251,12 +251,12 @@ describe "The Maruku span parser" do
     if res == :raise
       it "should raise an error (#{comment}) for \"#{md}\"" do
         pending if pend
-        lambda {@doc.parse_span(md)}.should raise_error(Maruku::Exception)
+        expect(lambda {@doc.parse_span(md)}).to raise_error(Maruku::Exception)
       end
     else
       it "should parse \"#{md}\" as #{res.inspect}" do
         pending if pend
-        @doc.parse_span(md).should == res
+        expect(@doc.parse_span(md)).to be == res
       end
     end
   end
