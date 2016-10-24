@@ -21,7 +21,7 @@ module MaRuKu::In::Markdown::SpanLevelParser
 
   class CharSourceManual
     def initialize(s, parent=nil)
-      raise "Passed #{s.class}" if not s.kind_of? String
+      raise "Passed #{s.class}" unless s.kind_of? String
       @buffer = s
       @buffer_index = 0
       @parent = parent
@@ -29,7 +29,7 @@ module MaRuKu::In::Markdown::SpanLevelParser
 
     # Return current char as a String (or nil).
     def cur_char
-      cur_chars(1)
+      @buffer[@buffer_index]
     end
 
     # Return the next n chars as a String.
@@ -41,7 +41,7 @@ module MaRuKu::In::Markdown::SpanLevelParser
     # Return the char after current char as a String (or nil).
     def next_char
       return nil if @buffer_index + 1 >= @buffer.size
-      @buffer[@buffer_index + 1, 1]
+      @buffer[@buffer_index + 1]
     end
 
     def shift_char
@@ -67,14 +67,11 @@ module MaRuKu::In::Markdown::SpanLevelParser
     end
 
     def next_matches(r)
-      r2 = /^.{#{@buffer_index}}#{r}/m
-      r2.match @buffer
+      /^.{#{@buffer_index}}#{r}/m.match @buffer
     end
 
     def read_regexp(r)
-      r2 = /^#{r}/
-      rest = current_remaining_buffer
-      m = r2.match(rest)
+      m = /^#{r}/.match(current_remaining_buffer)
       if m
         @buffer_index += m.to_s.size
       end
@@ -82,10 +79,7 @@ module MaRuKu::In::Markdown::SpanLevelParser
     end
 
     def consume_whitespace
-      while c = cur_char
-        break unless (c == ' ' || c == "\t")
-        ignore_char
-      end
+      ignore_char while [' ', "\t"].include? cur_char
     end
 
     def describe

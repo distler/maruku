@@ -33,13 +33,13 @@ index.html: maruku.html
 	cp $< $@
 
 %.html: %.md
-	ruby -I../lib ../bin/maruku --html -u $<
+	ruby21 -I../lib ../bin/maruku --html -u $<
 
 %.xhtml: %.md
-	ruby -I../lib ../bin/maruku -m itex2mml --html -u $<
+	ruby21 -I../lib ../bin/maruku -m itex2mml --html -u $<
 
 %.pdf: %.md
-	ruby -I../lib ../bin/maruku -m none --pdf -u $<
+	ruby21 -I../lib ../bin/maruku -m none --pdf -u $<
 
 dist:
 	-rm *.out *.aux *.tex *.toc *.dvi *.log
@@ -59,7 +59,7 @@ publish_doc:
 	rsync --recursive -v ../doc/  andrea@rubyforge.org:/var/www/gforge-projects/maruku/rdoc
 
 exd.html:
-	ruby -I../lib exd/exd.rb
+	ruby21 -I../lib exd/exd.rb
 	
 exd.tex: exd.html
 

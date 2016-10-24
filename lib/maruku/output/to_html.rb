@@ -449,7 +449,7 @@ module MaRuKu::Out::HTML
     h = wrap_as_element element_name
 
     if span = render_section_number
-      h.children.first.before(span)
+      h.children.first.before(span) unless span.nil?
     end
 
     add_ws h

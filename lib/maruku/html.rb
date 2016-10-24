@@ -32,7 +32,7 @@ module MaRuKu
       if !$warned_nokogiri && MaRuKu::Globals[:html_parser] == 'nokogiri'
         begin
           require 'nokogiri'
-          return NokogiriHTMLFragment.new(raw_html)
+          return NokogiriXMLFragment.new(raw_html)
         rescue LoadError
           warn "Nokogiri could not be loaded. Falling back to REXML."
           $warned_nokogiri = true
@@ -45,7 +45,7 @@ module MaRuKu
   end
 
   # Nokogiri backend for HTML handling
-  class NokogiriHTMLFragment
+  class NokogiriXMLFragment
     def initialize(raw_html)
       # Wrap our HTML in a dummy document with a doctype (just
       # for the entity references)

@@ -186,7 +186,8 @@ module MaRuKu
     # Generate an id for headers. Assumes @children is set.
     def generate_id
       raise "generate_id only makes sense for headers" unless node_type == :header
-      generated_id = children_to_s.tr(' ', '_').downcase.gsub(/\W/, '').strip
+      # a bit of a hack to work around Instiki's nowiki chunk handler
+      generated_id = children_to_s.gsub(/chunk\d+nowikichunk/,'opaque_content').tr(' ', '_').downcase.gsub(/\W/, '').strip
       num_occurs = (@doc.header_ids[generated_id] += 1)
       generated_id += "_#{num_occurs}" if num_occurs > 1
       generated_id
