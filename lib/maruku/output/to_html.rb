@@ -833,7 +833,7 @@ module MaRuKu::Out::HTML
       entity_name = entity.html_num
     end
 
-    if entity_name.kind_of? Fixnum
+    if entity_name.kind_of? Integer
       # Work around https://github.com/sparklemotion/nokogiri/issues/835
       # by simply converting numeric entities to unicode characters
       xtext([entity_name].pack('U*'))
