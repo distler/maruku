@@ -14,8 +14,8 @@ module MaRuKu::In::Markdown::SpanLevelParser
 
   # Choose!
 
-  #CharSource = CharSourceManual     # faster! 58ms vs. 65ms
-  CharSource = CharSourceStrscan   # Faster on LONG documents. But StringScanner is (was?) buggy in Rubinius
+  CharSource = CharSourceManual     # faster! 58ms vs. 65ms
+  #CharSource = CharSourceStrscan   # Faster on LONG documents. But StringScanner is (was?) buggy in Rubinius
   #CharSource = CharSourceDebug
 
 
