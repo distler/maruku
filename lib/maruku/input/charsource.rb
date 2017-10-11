@@ -14,8 +14,8 @@ module MaRuKu::In::Markdown::SpanLevelParser
 
   # Choose!
 
-  CharSource = CharSourceManual     # faster! 58ms vs. 65ms
-  #CharSource = CharSourceStrscan   # Faster on LONG documents. But StringScanner is buggy in Rubinius
+  #CharSource = CharSourceManual     # faster! 58ms vs. 65ms
+  CharSource = CharSourceStrscan   # Faster on LONG documents. But StringScanner is (was?) buggy in Rubinius
   #CharSource = CharSourceDebug
 
 
@@ -137,22 +137,29 @@ module MaRuKu::In::Markdown::SpanLevelParser
 
     # Return current char as a String (or nil).
     def cur_char
-      @scanner.peek(1)[0]
+      p = @scanner.pos
+      c = @scanner.getch
+      @scanner.pos = p
+      c
     end
 
     # Return the next n chars as a String.
     def cur_chars(n)
-      @scanner.peek(n)
+      p = @scanner.pos
+      c = ""
+      [n, @scanner.rest.length].min.times { c << @scanner.getch }
+      @scanner.pos = p
+      c
     end
 
     # Return the char after current char as a String (or nil).
     def next_char
-      @scanner.peek(2)[1]
+      cur_chars(2)[1]
     end
 
     # Return a character as a String, advancing the pointer.
     def shift_char
-      @scanner.getch[0]
+      @scanner.getch
     end
 
     # Advance the pointer
@@ -162,7 +169,7 @@ module MaRuKu::In::Markdown::SpanLevelParser
 
     # Advance the pointer by n
     def ignore_chars(n)
-      n.times { @scanner.getch }
+      [n, @scanner.rest.length].min.times { @scanner.getch }
     end
 
     # Return the rest of the string
@@ -172,7 +179,7 @@ module MaRuKu::In::Markdown::SpanLevelParser
 
     # Returns true if string matches what we're pointing to
     def cur_chars_are(string)
-      @scanner.peek(string.size) == string
+      cur_chars(string.size) == string
     end
 
     # Returns true if Regexp r matches what we're pointing to
@@ -190,9 +197,9 @@ module MaRuKu::In::Markdown::SpanLevelParser
 
     def describe
       len = 75
-      num_before = [len/2, @scanner.pos].min
+      num_before = [len/2, @scanner.charpos].min
       num_after = [len/2, @scanner.rest_size].min
-      num_before_max = @scanner.pos
+      num_before_max = @scanner.charpos
       num_after_max = @scanner.rest_size
 
       num_before = [num_before_max, len - num_after].min
@@ -211,7 +218,7 @@ module MaRuKu::In::Markdown::SpanLevelParser
         str += "EOF"
       end
 
-      pre_s = @scanner.pos - index_start
+      pre_s = @scanner.charpos - index_start
       pre_s = [pre_s, 0].max
       pre_s2 = [len-pre_s, 0].max
       pre = " " * pre_s
