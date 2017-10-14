@@ -26,9 +26,8 @@ module MaRuKu::In::Markdown::BlockLevelParser
 
     def shift_line
       raise "Over the rainbow" if @lines_index >= @lines.size
-      l = @lines[@lines_index]
       @lines_index += 1
-      l
+      @lines[@lines_index - 1]
     end
 
     def ignore_line

@@ -32,7 +32,9 @@ module MaRuKu::In::Markdown::SpanLevelParser
       @buffer[@buffer_index]
     end
 
-    # Return the next n chars as a String.
+    # Return the next n chars as a String (or:
+    #  * all remaining characters if there are less than n remaining
+    #  * nil if @buffer_index is out of range).
     def cur_chars(n)
       return nil if @buffer_index >= @buffer.size
       @buffer[@buffer_index, n]
@@ -40,14 +42,12 @@ module MaRuKu::In::Markdown::SpanLevelParser
 
     # Return the char after current char as a String (or nil).
     def next_char
-      return nil if @buffer_index + 1 >= @buffer.size
       @buffer[@buffer_index + 1]
     end
 
     def shift_char
-      c = cur_char
       @buffer_index += 1
-      c
+      @buffer[@buffer_index-1]
     end
 
     def ignore_char
@@ -63,7 +63,7 @@ module MaRuKu::In::Markdown::SpanLevelParser
     end
 
     def cur_chars_are(string)
-      cur_chars(string.size) == string
+      @buffer[@buffer_index, string.size] == string
     end
 
     def next_matches(r)
@@ -79,7 +79,7 @@ module MaRuKu::In::Markdown::SpanLevelParser
     end
 
     def consume_whitespace
-      ignore_char while [' ', "\t"].include? cur_char
+      @buffer_index += 1 while [' ', "\t"].include? @buffer[@buffer_index]
     end
 
     def describe
@@ -143,7 +143,7 @@ module MaRuKu::In::Markdown::SpanLevelParser
       c
     end
 
-    # Return the next n chars as a String.
+    # Return the next n chars as a String (or nil).
     def cur_chars(n)
       p = @scanner.pos
       c = ""
