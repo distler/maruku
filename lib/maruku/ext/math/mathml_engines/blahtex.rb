@@ -14,7 +14,7 @@ module MaRuKu::Out::HTML
     md5sum = Digest::MD5.hexdigest(tex + " params: ")
     result_file = File.join(get_setting(:html_png_dir), md5sum + ".txt")
 
-    unless File.exists?(result_file)
+    unless File.exist?(result_file)
       Tempfile.open('maruku_blahtex') do |tmp_in|
         tmp_in.write tex
         tmp_in.close
