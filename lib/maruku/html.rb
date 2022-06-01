@@ -105,7 +105,7 @@ module MaRuKu
             el = doc.md_el(:dummy, parsed)
 
             # Nokogiri collapses consecutive Text nodes, so replace it by a dummy element
-            guard = Nokogiri::XML::Element.new('guard', @fragment)
+            guard = Nokogiri::XML::Element.new('guard', @fragment.document)
             original_text.replace(guard)
             el.children_to_html.each do |x|
               guard.before(x.to_s)
