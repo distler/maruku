@@ -30,7 +30,7 @@ module MaRuKu
       def fix_latex(str)
         return str unless self.get_setting(:html_math_engine) == 'itex2mml'
         s = str.gsub("\\mathop{", "\\operatorname{")
-        s.gsub!(/\\begin\{svg\}(.*?)\\end\{svg\}/m){|inside| $1.sub!(/.*?(\\begin\{tikz(picture|cd)\}.*?\\end\{tikz(picture|cd)\}).*?/m,'\1')}
+        s.gsub!(/\\begin\{svg\}.*?\\end\{svg\}/m, " ")
         s.gsub!("\\array{","\\itexarray{")
         s.gsub("\\space{", "\\itexspace{")
       end
