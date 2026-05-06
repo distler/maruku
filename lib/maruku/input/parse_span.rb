@@ -312,7 +312,7 @@ module MaRuKu::In::Markdown::SpanLevelParser
                m[1]
              else
                # XML instructions are invalid without a target
-               ''
+               String.new
              end
 
     delim = "?>"
@@ -321,7 +321,7 @@ module MaRuKu::In::Markdown::SpanLevelParser
 
     src.ignore_chars delim.size
 
-    code = (code || "").strip
+    code = (code || String.new).strip
     con.push_element md_xml_instr(target, code)
   end
 
@@ -382,7 +382,7 @@ module MaRuKu::In::Markdown::SpanLevelParser
       maruku_error 'Invalid char for url', src
     end
 
-    url = read_simple(src, nil, break_on) || ''
+    url = read_simple(src, nil, break_on) || String.new
 
     if url[0, 1] == '<' && url[-1, 1] == '>'
       url = url[1, url.size-2]
@@ -422,7 +422,7 @@ module MaRuKu::In::Markdown::SpanLevelParser
   # By default, raises on error if the string terminates unexpectedly. This can be
   # by setting the last argument to false.
   def read_simple(src, escaped, exit_on_chars=nil, exit_on_strings=nil, warn=true)
-    text = ""
+    text = String.new
     escaped = Array(escaped)
     exit_on_chars = Array(exit_on_chars)
     exit_on_strings = Array(exit_on_strings)
@@ -574,7 +574,7 @@ module MaRuKu::In::Markdown::SpanLevelParser
     when '('
       src.ignore_char # opening (
       src.consume_whitespace
-      url = read_url(src, [' ', "\t", ")"]) || ''
+      url = read_url(src, [' ', "\t", ")"]) || String.new
 
       src.consume_whitespace
       title = nil
@@ -668,7 +668,7 @@ module MaRuKu::In::Markdown::SpanLevelParser
       ref_id = read_ref_id(src, con)
       if !ref_id # TODO: check around
         maruku_error 'Reference not closed.', src, con
-        ref_id = ""
+        ref_id = String.new
       end
 
       con.push_element md_image(alt_text, ref_id)
@@ -684,7 +684,7 @@ module MaRuKu::In::Markdown::SpanLevelParser
 
     def initialize
       @elements = []
-      @cur_string = ''
+      @cur_string = String.new
     end
 
     def push_element(e)
@@ -714,7 +714,7 @@ module MaRuKu::In::Markdown::SpanLevelParser
     def push_string_if_present
       unless @cur_string.empty?
         @elements << @cur_string
-        @cur_string = ''
+        @cur_string = String.new
       end
     end
 

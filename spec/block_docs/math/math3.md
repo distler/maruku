@@ -28,7 +28,7 @@ md_el(:document,[
 <div class="maruku-equation" id="eq:eq1"><span class="maruku-eq-number">(1)</span><math xmlns="http://www.w3.org/1998/Math/MathML" display="block" id="mathml_cc28fba3bd2ad745c129410a160b7a595845ca3f_1" class="maruku-mathml"><semantics><mrow><mi>α</mi></mrow><annotation encoding="application/x-tex">
 	\alpha
 
-</annotation></semantics></math></div><div class="maruku-equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block" id="mathml_cc28fba3bd2ad745c129410a160b7a595845ca3f_2" class="maruku-mathml"><semantics><mrow><mi>P</mi><mo lspace="verythinmathspace">:</mo><mi>A</mi><mo>×</mo><mi>A</mi><mo lspace="thinmathspace" rspace="thinmathspace">⇸</mo><mi>A</mi></mrow><annotation encoding="application/x-tex">
+</annotation></semantics></math></div><div class="maruku-equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block" id="mathml_cc28fba3bd2ad745c129410a160b7a595845ca3f_2" class="maruku-mathml"><semantics><mrow><mi>P</mi><mo lspace="0.11111em">:</mo><mi>A</mi><mo>×</mo><mi>A</mi><mo lspace="0.16667em" rspace="0.16667em">⇸</mo><mi>A</mi></mrow><annotation encoding="application/x-tex">
 	P \colon A\times A \mathop{⇸} A
 
 </annotation></semantics></math></div><div class="maruku-equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block" id="mathml_cc28fba3bd2ad745c129410a160b7a595845ca3f_3" class="maruku-mathml"><semantics><mrow><mi>β</mi></mrow><annotation encoding="application/x-tex"> \beta

@@ -7,7 +7,7 @@ require 'maruku'
 require 'nokogiri/diff'
 require 'rspec/support/object_formatter'
 ## When you need to see the whole message
-# RSpec::Support::ObjectFormatter.default_instance.max_formatted_output_length = 10000
+RSpec::Support::ObjectFormatter.default_instance.max_formatted_output_length = 10000
 
 # Allow us to test both HTML parser backends
 MaRuKu::Globals[:html_parser] = ENV['HTML_PARSER'] if ENV['HTML_PARSER']

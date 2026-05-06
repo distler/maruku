@@ -90,7 +90,7 @@ module MaRuKu
         height_in_ex = height_in_px / pixels_per_ex
         depth_in_ex = depth_in_px / pixels_per_ex
         total_height_in_ex = height_in_ex + depth_in_ex
-        style = ""
+        style = String.new
         style << "vertical-align: -#{depth_in_ex}ex;" if use_depth
         style << "height: #{total_height_in_ex}ex;"
 

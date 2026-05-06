@@ -69,7 +69,7 @@ module MaRuKu::In::Markdown::BlockLevelParser
     # Returns the type of next line as a string
     # breaks at first :definition
     def tell_me_the_future
-      s = ""
+      s = String.new
       num_e = 0
 
       @lines_index.upto(@lines.size - 1) do |i|

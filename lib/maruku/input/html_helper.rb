@@ -15,10 +15,10 @@ module MaRuKu::In::Markdown::SpanLevelParser
     attr_reader :rest, :first_tag
 
     def initialize
-      @rest = ""
+      @rest = String.new
       @tag_stack = []
       @m = nil
-      @already = ""
+      @already = String.new
       self.state = :inside_element
     end
 
@@ -39,7 +39,7 @@ module MaRuKu::In::Markdown::SpanLevelParser
             self.state = :inside_element
           else
             @already << @rest.gsub(/-(?![^\-])/, '- ') # Workaround for https://bugs.ruby-lang.org/issues/9277
-            @rest = ""
+            @rest = String.new
             self.state = :inside_comment
           end
         when :inside_element
@@ -87,7 +87,7 @@ module MaRuKu::In::Markdown::SpanLevelParser
             end
           else
             @partial_tag << @rest
-            @rest = ""
+            @rest = String.new
             self.state = :inside_tag
           end
         when :inside_cdata
@@ -98,7 +98,7 @@ module MaRuKu::In::Markdown::SpanLevelParser
             start_script_style if script_style?
           else
             @already << @rest
-            @rest = ""
+            @rest = String.new
             self.state = :inside_cdata
           end
         else
@@ -201,7 +201,7 @@ module MaRuKu::In::Markdown::SpanLevelParser
     # Save our @already buffer elsewhere, and switch to using @already for the
     # contents of this script or style tag.
     def start_script_style
-      @before_already, @already = @already, ""
+      @before_already, @already = @already, String.new
     end
 
     # Finish script or style tag content, wrapping it in CDATA if necessary,

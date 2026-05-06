@@ -38,7 +38,7 @@ module MaRuKu; module In; module Markdown; module BlockLevelParser
         src.ignore_line
       when :ial
         m = InlineAttributeList.match src.shift_line
-        content = m[1] || ""
+        content = m[1] || String.new
         src2 = CharSource.new(content, src)
         interpret_extension(src2, output)
       when :ald
@@ -547,7 +547,7 @@ module MaRuKu; module In; module Markdown; module BlockLevelParser
     stuff = (match[6] || '')
     stuff.split.each do |couple|
       k, v = couple.split('=')
-      v ||= ""
+      v ||= String.new
       v = v[1..-2] if v.start_with?('"') # strip quotes
       hash[k.to_sym] = v
     end

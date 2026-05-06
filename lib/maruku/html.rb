@@ -67,7 +67,7 @@ module MaRuKu
     # Add a class to the children of this fragment
     def add_class(class_name)
       @fragment.children.each do |c|
-        c['class'] = ((c['class']||'').split(' ') + [class_name]).join(' ')
+        c['class'] = ((c['class']||String.new).split(' ') + [class_name]).join(' ')
       end
     end
 
@@ -121,7 +121,7 @@ module MaRuKu
     def to_html
       output_options = Nokogiri::XML::Node::SaveOptions::DEFAULT_XHTML ^
         Nokogiri::XML::Node::SaveOptions::FORMAT
-      @fragment.children.inject("") do |out, child|
+      @fragment.children.inject(String.new) do |out, child|
         out << child.serialize(:save_with => output_options, :encoding => 'UTF-8')
       end
     end
@@ -165,7 +165,7 @@ module MaRuKu
     # Add a class to the children of this fragment
     def add_class(class_name)
       @fragment.each_element do |c|
-        c.attributes['class'] = ((c.attributes['class']||'').split(' ') + [class_name]).join(' ')
+        c.attributes['class'] = ((c.attributes['class']||String.new).split(' ') + [class_name]).join(' ')
       end
     end
 
@@ -225,7 +225,7 @@ module MaRuKu
 
     def to_html
       formatter = REXML::Formatters::Default.new(true)
-      @fragment.children.inject("") do |out, child|
+      @fragment.children.inject(String.new) do |out, child|
         out << formatter.write(child, '')
       end
     end

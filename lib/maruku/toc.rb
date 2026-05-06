@@ -110,7 +110,7 @@ module MaRuKu
     end
 
     def _to_latex
-      s = ""
+      s = String.new
       @section_children.each do |c|
         s << "\\noindent"
         if number = c.header_element.section_number

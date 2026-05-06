@@ -99,10 +99,10 @@ svg xmlns=http://www.w3.org/2000/svg width=40 height=16 viewBox=0 0 40 16
 /svg
 \end{svg}\includegraphics[width=3em]{young4}</annotation></semantics></math>.</p>
 *** Output of to_latex ***
-In $SU(3)$, $ \includegraphics[width=2em]{young1}
+In $SU(3)$, $\includegraphics[width=2em]{young1}
  \otimes
- \includegraphics[width=1em]{young2}
+\includegraphics[width=1em]{young2}
  =
- \includegraphics[width=2em]{young3}
+\includegraphics[width=2em]{young3}
  \oplus
- \includegraphics[width=3em]{young4}$.
+\includegraphics[width=3em]{young4}$.

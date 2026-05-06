@@ -438,7 +438,7 @@ Created by \\href{#{MaRuKu::MARUKU_URL}}{Maruku} #{self.nice_date}.
   end
 
   def to_latex_cell
-    s=""
+    s=String.new
     if @attributes.has_key?(:colspan) 
       # TODO figure out how to set the alignment (defaulting to left for now)
       s="\\multicolumn {"<< @attributes[:colspan]<<"}{|l|}{"<<children_to_latex<<"}"  
@@ -469,7 +469,7 @@ Created by \\href{#{MaRuKu::MARUKU_URL}}{Maruku} #{self.nice_date}.
   end
 
   def to_latex_definition
-    s = ""
+    s = String.new
 
     self.terms.each do |t|
       s << "\n\\item[#{t.children_to_latex}] "

@@ -146,7 +146,7 @@ module MaRuKu::In::Markdown::SpanLevelParser
     # Return the next n chars as a String (or nil).
     def cur_chars(n)
       p = @scanner.pos
-      c = ""
+      c = String.new
       [n, @scanner.rest.length].min.times { c << @scanner.getch }
       @scanner.pos = p
       c

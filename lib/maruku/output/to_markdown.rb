@@ -105,7 +105,7 @@ module MaRuKu::Out::Markdown
 
   def to_md_ul(context)
     len = (context[:line_length] || DefaultLineLength) - 2
-    md = ""
+    md = String.new
     self.children.each_with_index do |li, i|
       w = wrap(li.children, len-2, context)
       s = "- " + w
@@ -130,11 +130,11 @@ module MaRuKu::Out::Markdown
   end
 
   def wrap(array, line_length, context)
-    out = ""
-    line = ""
+    out = String.new
+    line = String.new
     array.each do |c|
       if c.kind_of?(MaRuKu::MDElement) &&  c.node_type == :linebreak
-        out << line.strip << "  \n"; line="";
+        out << line.strip << "  \n"; line=String.new;
         next
       end
 
@@ -153,7 +153,7 @@ module MaRuKu::Out::Markdown
       pieces.each do |p|
         if p.size + line.size > line_length
           out << line.strip << "\n";
-          line = ""
+          line = String.new
         end
         line << p
       end

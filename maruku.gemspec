@@ -31,12 +31,12 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 1.8.7'
 
   s.add_dependency('nokogiri', '~> 1.5', '>= 1.5.6')
-  s.add_dependency('syntax', '~> 1.1.0')
+  s.add_dependency('syntax', '>= 1.1.0')
   s.add_dependency('itextomml', '>= 1.5.0')
 
-  s.add_development_dependency('rake', '~> 0.9.2')
-  s.add_development_dependency('rspec', '~> 2.12.0')
-  s.add_development_dependency('yard', '~> 0.7.2')
+  s.add_development_dependency('rake', '~> 10.1.0')
+  s.add_development_dependency('rspec', '~> 2.14.0')
+  s.add_development_dependency('yard', '~> 0.8.7')
   s.add_development_dependency('nokogiri-diff', '~> 0.2.0')
 end
 
